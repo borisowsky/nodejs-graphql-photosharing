@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "incremental": true,
+    "baseUrl": "./"
+  },
+  "include": ["./src/**/*", "./tests/**/*"],
+}

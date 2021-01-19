@@ -1,1 +1,7 @@
-console.log('Hello world');
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient({
+  log: ['query', 'info', 'warn'],
+});
+
+export { prisma };

@@ -1,11 +1,10 @@
 import bcrypt from 'bcrypt';
 import * as yup from 'yup';
 
-import { ApolloError } from 'apollo-server';
+import { ApolloError, AuthenticationError } from 'apollo-server';
 import jwt from 'jsonwebtoken';
 
 import { MutationResolvers } from '@app/types/resolvers';
-import { UniqueValueError } from '@app/graphql/errors';
 import { groupYupErrors } from '@app/graphql/errors/helpers';
 
 const schema = yup.object().shape({
@@ -13,7 +12,7 @@ const schema = yup.object().shape({
   password: yup.string().min(3).required(),
 });
 
-export const createUser: MutationResolvers['createUser'] = async (
+export const login: MutationResolvers['login'] = async (
   _root,
   { input },
   { prisma },
@@ -28,22 +27,25 @@ export const createUser: MutationResolvers['createUser'] = async (
     });
   }
 
-  const hashedPassword = await bcrypt.hash(input.password, 10);
-
   try {
-    const user = await prisma.user.create({
-      data: { email: input.email, password: hashedPassword },
+    const user = await prisma.user.findUnique({
+      where: { email: input.email },
     });
+
+    const isPasswordsEqual = await bcrypt.compare(
+      input.password,
+      user.password,
+    );
+
+    if (!isPasswordsEqual) {
+      throw new AuthenticationError('Wrong credentials');
+    }
 
     return {
       ...user,
       token: jwt.sign(user, process.env.JWT_SECRET),
     };
-  } catch (e) {
-    if (e.code === 'P2002') {
-      throw new UniqueValueError('E-Mail');
-    }
-
-    throw new ApolloError('Unknown error');
+  } catch {
+    throw new AuthenticationError('Wrong credentials');
   }
 };

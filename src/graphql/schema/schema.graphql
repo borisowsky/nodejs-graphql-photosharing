@@ -3,15 +3,28 @@ type User {
   email: String!
 }
 
+type AuthenticatedUser {
+  id: Int!
+  email: String!
+  token: String!
+}
+
 input CreateUserInput {
   email: String!
   password: String!
 }
 
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
 type Query {
+  me: AuthenticatedUser
   user(id: Int!): User
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): User!
+  createUser(input: CreateUserInput!): AuthenticatedUser!
+  login(input: LoginUserInput!): AuthenticatedUser!
 }

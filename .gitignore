@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Project
-/data.db
+# Database
+/prisma/data.db
 
 # Dependencies
 /node_modules

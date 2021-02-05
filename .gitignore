@@ -1,15 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Database
-/prisma/data.db
+# Databases
+/prisma/*.db
 
 # Dependencies
 /node_modules
 /.pnp
 .pnp.js
 
-# Testing
-/coverage
 
 # Misc
 .DS_Store

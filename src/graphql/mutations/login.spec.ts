@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server';
+import faker from 'faker';
 
 import { mutate } from '@app/utils/testing';
 
@@ -22,7 +23,10 @@ const LOGIN_USER_MUTATION = gql`
 
 describe('Login user', () => {
   it('Should create user and be able to log in with given credentials', async () => {
-    const credentials = { email: 'test@example.com', password: 'password' };
+    const credentials = {
+      email: faker.internet.email(),
+      password: faker.internet.password(10),
+    };
 
     await mutate({
       mutation: CREATE_USER_MUTATION,

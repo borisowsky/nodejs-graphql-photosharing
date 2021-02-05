@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server';
+import faker from 'faker';
 
 import { mutate } from '@app/utils/testing';
 
@@ -16,7 +17,10 @@ describe('Create user', () => {
     const { data } = await mutate({
       mutation: CREATE_USER_MUTATION,
       variables: {
-        input: { email: 'test@example.com', password: 'password' },
+        input: {
+          email: faker.internet.email(),
+          password: faker.internet.password(10),
+        },
       },
     });
 
@@ -27,7 +31,10 @@ describe('Create user', () => {
     const { data, errors } = await mutate({
       mutation: CREATE_USER_MUTATION,
       variables: {
-        input: { email: 'this-is-not-an-email', password: 'password' },
+        input: {
+          email: 'this-is-not-an-email',
+          password: faker.internet.password(10),
+        },
       },
     });
 
@@ -39,7 +46,10 @@ describe('Create user', () => {
     const { data, errors } = await mutate({
       mutation: CREATE_USER_MUTATION,
       variables: {
-        input: { email: 'test@example.com', password: '' },
+        input: {
+          email: faker.internet.email(),
+          password: faker.internet.password(4),
+        },
       },
     });
 

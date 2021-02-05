@@ -1,35 +1,14 @@
 import { execSync } from 'child_process';
 
-import { ApolloServer } from 'apollo-server';
 import { createTestClient } from 'apollo-server-testing';
 
 import { PrismaClient } from '@prisma/client';
 
-import { typeDefs } from '@app/graphql';
-import { resolvers as queryResolvers } from '@app/graphql/queries';
-import { resolvers as mutationResolvers } from '@app/graphql/mutations';
-
-import type { ServerContext } from '@app/types/global';
+import { createServer } from '@app/utils/server';
 
 const prisma = new PrismaClient();
 
-const createServer = () => {
-  return createTestClient(
-    new ApolloServer({
-      typeDefs,
-      resolvers: {
-        Query: queryResolvers,
-        Mutation: mutationResolvers,
-      },
-      context: {
-        prisma,
-        userCredentials: null,
-      } as ServerContext,
-    }),
-  );
-};
-
-export const { query, mutate } = createServer();
+export const { query, mutate } = createTestClient(createServer({ prisma }));
 
 beforeAll(() => {
   process.env.DATABASE_URL = 'file:./test.db';

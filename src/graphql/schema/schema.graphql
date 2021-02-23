@@ -1,11 +1,13 @@
 type User {
   id: Int!
   email: String!
+  createdAt: String!
 }
 
 type AuthenticatedUser {
   id: Int!
   email: String!
+  createdAt: String!
   token: String!
 }
 

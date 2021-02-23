@@ -1,21 +1,22 @@
-import jwt from 'jsonwebtoken';
+import { AuthenticationError } from 'apollo-server';
 
+import { User } from '@app/db/entities';
 import { QueryResolvers } from '@app/types/resolvers';
-import { requireAuthentication } from '@app/helpers/authentication/resolvers';
+
+import { getAuthenticatedUserObject } from '../errors/authentication';
 
 export const me: QueryResolvers['me'] = async (
   _root,
   _args,
-  { prisma, userCredentials },
+  { userCredentials },
 ) => {
-  await requireAuthentication({ prisma, userCredentials });
+  try {
+    const user = await User.findOneOrFail({
+      where: { id: userCredentials.id },
+    });
 
-  const user = await prisma.user.findUnique({
-    where: { id: Number(userCredentials.id) },
-  });
-
-  return {
-    ...user,
-    token: jwt.sign(user, process.env.JWT_SECRET),
-  };
+    return getAuthenticatedUserObject(user);
+  } catch (e) {
+    throw new AuthenticationError('Cannot authenticate');
+  }
 };

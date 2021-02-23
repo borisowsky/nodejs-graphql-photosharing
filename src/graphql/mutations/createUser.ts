@@ -1,11 +1,10 @@
-import bcrypt from 'bcrypt';
 import * as yup from 'yup';
 
 import { ApolloError } from 'apollo-server';
-import jwt from 'jsonwebtoken';
 
+import { User } from '@app/db/entities';
 import { MutationResolvers } from '@app/types/resolvers';
-import { UniqueValueError } from '@app/graphql/errors';
+import { UniqueValueError, UnknownError } from '@app/graphql/errors';
 import { groupYupErrors } from '@app/graphql/errors/helpers';
 
 const schema = yup.object().shape({
@@ -16,34 +15,29 @@ const schema = yup.object().shape({
 export const createUser: MutationResolvers['createUser'] = async (
   _root,
   { input },
-  { prisma },
 ) => {
   try {
     await schema.validate(input, { abortEarly: false });
   } catch (e) {
     const errors = groupYupErrors(e);
 
-    throw new ApolloError(e.message, null, {
-      errors,
-    });
+    throw new ApolloError(e.message, null, { errors });
   }
 
-  const hashedPassword = await bcrypt.hash(input.password, 10);
-
   try {
-    const user = await prisma.user.create({
-      data: { email: input.email, password: hashedPassword },
-    });
+    const user = new User();
 
-    return {
-      ...user,
-      token: jwt.sign(user, process.env.JWT_SECRET),
-    };
+    user.setEmail(input.email);
+    user.setPassword(input.password);
+
+    const savedUser = await user.save();
+
+    return await User.authenticate(savedUser.email, input.password);
   } catch (e) {
-    if (e.code === 'P2002') {
+    if (e.code === 'SQLITE_CONSTRAINT') {
       throw new UniqueValueError('E-Mail');
     }
 
-    throw new ApolloError('Unknown error');
+    throw new UnknownError(e.message);
   }
 };

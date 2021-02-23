@@ -2,26 +2,18 @@ import { ApolloServer } from 'apollo-server';
 import { ApolloServerExpressConfig } from 'apollo-server-express';
 import dotenv from 'dotenv';
 
-import { PrismaClient } from '@prisma/client';
-
 import { typeDefs } from '@app/graphql';
 import { resolvers as queryResolvers } from '@app/graphql/queries';
 import { resolvers as mutationResolvers } from '@app/graphql/mutations';
 import { getCredentialsFromToken } from '@app/helpers/authentication';
-
 import type { ServerContext } from '@app/types/global';
 
 dotenv.config();
-
-const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn'],
-});
 
 const defaultContext: ApolloServerExpressConfig['context'] = ({ req }) => {
   const { authorization } = req.headers;
 
   const context: ServerContext = {
-    prisma,
     userCredentials: null,
   };
 

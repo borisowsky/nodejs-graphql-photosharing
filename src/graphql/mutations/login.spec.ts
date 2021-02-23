@@ -1,7 +1,10 @@
 import { gql } from 'apollo-server';
 import faker from 'faker';
+import { createTestClient } from 'apollo-server-testing';
 
-import { mutate } from '@app/utils/testing';
+import { testingServer } from '@app/utils/testing';
+
+const { mutate } = createTestClient(testingServer);
 
 const CREATE_USER_MUTATION = gql`
   mutation createUser($input: CreateUserInput!) {

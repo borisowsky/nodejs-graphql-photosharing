@@ -1,15 +1,19 @@
 import { ApolloError } from 'apollo-server';
 
+import { User } from '@app/db/entities';
 import { QueryResolvers } from '@app/types/resolvers';
 
-export const user: QueryResolvers['user'] = async (_root, args, { prisma }) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: Number(args.id) },
-    });
+import { getAuthenticatedUserObject } from '../errors/authentication';
 
-    return user;
+export const user: QueryResolvers['user'] = async (_root, { id }) => {
+  try {
+    const user = await User.findOneOrFail(id);
+    const userObject = getAuthenticatedUserObject(user);
+
+    delete userObject.token;
+
+    return userObject;
   } catch {
-    throw new ApolloError(`Cannot find user with ID=${args.id}`);
+    throw new ApolloError(`Cannot find user with ID ${id}`);
   }
 };

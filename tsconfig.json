@@ -7,6 +7,8 @@
     "allowSyntheticDefaultImports": true,
     "target": "es6",
     "incremental": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "baseUrl": "./",
     "paths": {
       "@app/*": ["./src/*"]

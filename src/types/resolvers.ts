@@ -25,12 +25,14 @@ export type User = {
   __typename?: 'User';
   id: Scalars['Int'];
   email: Scalars['String'];
+  createdAt: Scalars['String'];
 };
 
 export type AuthenticatedUser = {
   __typename?: 'AuthenticatedUser';
   id: Scalars['Int'];
   email: Scalars['String'];
+  createdAt: Scalars['String'];
   token: Scalars['String'];
 };
 
@@ -217,6 +219,7 @@ export type UserResolvers<
 > = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -226,6 +229,7 @@ export type AuthenticatedUserResolvers<
 > = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
